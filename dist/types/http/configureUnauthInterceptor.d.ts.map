@@ -1,0 +1,1 @@
+{"version":3,"file":"configureUnauthInterceptor.d.ts","sourceRoot":"","sources":["../../src/http/configureUnauthInterceptor.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,0BAA0B,EAAE,MAAM,YAAY,CAAA;AAErE,eAAO,MAAM,0BAA0B,qBACnB,YAAY,gBAChB,MAAM,iBACL,MAAM,QAAQ,GAAG,CAAC,KAChC,0BAaF,CAAA"}

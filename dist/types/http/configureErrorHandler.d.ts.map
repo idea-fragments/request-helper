@@ -1,0 +1,1 @@
+{"version":3,"file":"configureErrorHandler.d.ts","sourceRoot":"","sources":["../../src/http/configureErrorHandler.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,MAAuB,kBAAkB,CAAA;AAC/D,OAAO,EAAE,gBAAgB,EAAc,MAAM,YAAY,CAAA;AAEzD,eAAO,MAAM,qBAAqB,iBAAkB,gBAAgB,SACjD,WAAW,GAAG,KAAK,mBAKrC,CAAA"}
