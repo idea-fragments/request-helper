@@ -1698,17 +1698,12 @@ var newRequestQueue = function (_a) {
 var refreshAuthTokens = function (_a) {
     var http = _a.http, refreshRoute = _a.refreshRoute, setAuthTokens = _a.setAuthTokens;
     return __awaiter(void 0, void 0, void 0, function () {
-        var _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    _b = setAuthTokens;
-                    return [4 /*yield*/, http.GET(refreshRoute)];
-                case 1: return [4 /*yield*/, _b.apply(void 0, [_c.sent()])];
-                case 2:
-                    _c.sent();
-                    return [2 /*return*/];
-            }
+        return __generator(this, function (_b) {
+            return [2 /*return*/, new Promise(function (resolve) {
+                    setTimeout(function () {
+                        http.GET(refreshRoute).then(setAuthTokens).then(resolve);
+                    }, 500);
+                })];
         });
     });
 };
@@ -11923,11 +11918,6 @@ var transformParamsToSnakeCase = function (_a) {
 };
 
 var queueRequests = newRequestQueue({ waitUntilComplete: refreshAuthTokens });
-var JaJa = /** @class */ (function () {
-    function JaJa() {
-    }
-    return JaJa;
-}());
 var newHttp = function (_a) {
     var afterRequestInterceptor = _a.afterRequestInterceptor, beforeRequestInterceptor = _a.beforeRequestInterceptor, domain = _a.domain, processError = _a.processError, getAuthTokens = _a.getAuthTokens, deleteAuthTokens = _a.deleteAuthTokens, setAuthTokens = _a.setAuthTokens, refreshRoute = _a.refreshRoute, refreshTokenHeaderName = _a.refreshTokenHeaderName;
     var http = new Http({
@@ -11946,7 +11936,6 @@ var newHttp = function (_a) {
 };
 
 exports.ServerError = ServerError;
-exports["default"] = JaJa;
 exports.newHttp = newHttp;
 exports.transformBodyToCamelCase = transformBodyToCamelCase;
 exports.transformParamsToSnakeCase = transformParamsToSnakeCase;

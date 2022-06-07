@@ -10,8 +10,6 @@ export declare type NewClientParams = {
     afterRequestInterceptor: AfterRequestInterceptor;
     refreshTokenHeaderName?: string;
 };
-export default class JaJa {
-}
 export declare const newHttp: ({ afterRequestInterceptor, beforeRequestInterceptor, domain, processError, getAuthTokens, deleteAuthTokens, setAuthTokens, refreshRoute, refreshTokenHeaderName, }: NewClientParams) => HttpClient;
 export * from "http/types";
 export * from "http/ServerError";

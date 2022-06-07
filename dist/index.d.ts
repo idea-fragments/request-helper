@@ -123,8 +123,6 @@ declare type NewClientParams = {
     afterRequestInterceptor: AfterRequestInterceptor;
     refreshTokenHeaderName?: string;
 };
-declare class JaJa {
-}
 declare const newHttp: ({ afterRequestInterceptor, beforeRequestInterceptor, domain, processError, getAuthTokens, deleteAuthTokens, setAuthTokens, refreshRoute, refreshTokenHeaderName, }: NewClientParams) => HttpClient;
 
-export { AfterRequestInterceptor, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, FetchError, HttpClient, NewClientParams, Pagination, RequestConfig, RequestParams, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, JaJa as default, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };
+export { AfterRequestInterceptor, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, FetchError, HttpClient, NewClientParams, Pagination, RequestConfig, RequestParams, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };
