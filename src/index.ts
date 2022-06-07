@@ -28,9 +28,7 @@ export type NewClientParams = {
   refreshTokenHeaderName?: string,
 }
 const queueRequests = newRequestQueue({ waitUntilComplete: refreshAuthTokens })
-export default class JaJa {
 
-}
 export const newHttp = ({
                           afterRequestInterceptor,
                           beforeRequestInterceptor,
