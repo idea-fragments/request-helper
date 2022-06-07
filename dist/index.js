@@ -1699,11 +1699,16 @@ var refreshAuthTokens = function (_a) {
     var http = _a.http, refreshRoute = _a.refreshRoute, setAuthTokens = _a.setAuthTokens;
     return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_b) {
-            return [2 /*return*/, new Promise(function (resolve) {
-                    setTimeout(function () {
-                        http.GET(refreshRoute).then(setAuthTokens).then(resolve);
-                    }, 500);
-                })];
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, new Promise(function (resolve) {
+                        setTimeout(function () {
+                            http.GET(refreshRoute).then(setAuthTokens).then(resolve);
+                        }, 500);
+                    })];
+                case 1:
+                    _b.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 };
