@@ -765,11 +765,11 @@ function __generator(thisArg, body) {
 }
 
 var configureAuthedRequest = function (getAuthTokens, refreshTokenHeaderName) {
-    var refreshHeader = refreshTokenHeaderName !== null && refreshTokenHeaderName !== void 0 ? refreshTokenHeaderName : "Session";
-    var _a = getAuthTokens(), accessToken = _a.accessToken, refreshToken = _a.refreshToken;
     return function (_a) {
         var _b;
         var _c = _a.headers, headers = _c === void 0 ? {} : _c, rest = __rest(_a, ["headers"]);
+        var refreshHeader = refreshTokenHeaderName !== null && refreshTokenHeaderName !== void 0 ? refreshTokenHeaderName : "Session";
+        var _d = getAuthTokens(), accessToken = _d.accessToken, refreshToken = _d.refreshToken;
         return (_assign(_assign({}, rest), { headers: _assign(_assign({}, headers), (_b = { Authorization: "Bearer ".concat(accessToken) }, _b[refreshHeader] = refreshToken, _b)), mode: "cors" }));
     };
 };
@@ -1551,6 +1551,116 @@ var toQueryString = function (o) {
     return queryString.stringify(o, { arrayFormat: "bracket" });
 };
 
+var dist = {};
+
+Object.defineProperty(dist, '__esModule', {
+  value: true
+});
+
+function __read(o, n) {
+  var m = typeof Symbol === "function" && o[Symbol.iterator];
+  if (!m) return o;
+  var i = m.call(o),
+      r,
+      ar = [],
+      e;
+
+  try {
+    while ((n === void 0 || n-- > 0) && !(r = i.next()).done) {
+      ar.push(r.value);
+    }
+  } catch (error) {
+    e = {
+      error: error
+    };
+  } finally {
+    try {
+      if (r && !r.done && (m = i["return"])) m.call(i);
+    } finally {
+      if (e) throw e.error;
+    }
+  }
+
+  return ar;
+}
+
+function __spreadArray(to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
+}
+
+var LEVEL_STYLES = {
+  info: "background: #499cc8; color: white;",
+  error: "background: #c14a4f; color: white;",
+  warn: "background: #e0a270; color: black;"
+};
+var modules = new Set();
+
+var Logger =
+/** @class */
+function () {
+  function Logger(moduleName) {
+    var _this = this;
+
+    this.log = function (level) {
+      return function () {
+        var args = [];
+
+        for (var _i = 0; _i < arguments.length; _i++) {
+          args[_i] = arguments[_i];
+        }
+
+        if (!modules.has(_this.moduleName)) return;
+        console[level].apply(console, __spreadArray(["%c".concat(Logger.packagePrefix()).concat(_this.moduleName), "".concat(LEVEL_STYLES[level], " padding: 2px 6px;")], __read(args), false));
+      };
+    };
+
+    this.writeInfo = this.log("info");
+    this.writeError = this.log("error");
+    this.writeWarning = this.log("warn");
+    this.moduleName = moduleName;
+  }
+
+  var _a;
+
+  _a = Logger;
+  Logger.packageName = "";
+
+  Logger.addModules = function (m) {
+    m.forEach(function (name) {
+      return modules.add(name);
+    });
+  };
+
+  Logger.getModules = function () {
+    return __spreadArray([], __read(modules), false);
+  };
+
+  Logger.packagePrefix = function () {
+    return !!_a.packageName ? "".concat(_a.packageName, " : ") : "";
+  };
+
+  return Logger;
+}();
+
+if (typeof window !== "undefined") window.Logger = Logger;
+var Logger_1 = dist.Logger = Logger;
+
+var name = "@idea-fragments/request-helper";
+
+var enableLogging = function () { return Logger_1.addModules([
+    "newHttp",
+    "newRequestQueue",
+    "request"
+]); };
+Logger_1.packageName = name;
+
+var logger$2 = new Logger_1("request");
 var request = function (rp) { return __awaiter(void 0, void 0, void 0, function () {
     var afterRequestInterceptor, beforeRequest, beforeRequestInterceptor, domain, errorInterceptor, method, uri, body, query, unauthInterceptor;
     return __generator(this, function (_a) {
@@ -1561,9 +1671,13 @@ var request = function (rp) { return __awaiter(void 0, void 0, void 0, function 
                         var queryString, url, config, resp, status, respBody;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, beforeRequest(uri)];
+                                case 0:
+                                    logger$2.writeInfo("START", uri);
+                                    logger$2.writeInfo("beforeRequest hook START", uri);
+                                    return [4 /*yield*/, beforeRequest(uri)];
                                 case 1:
                                     _a.sent();
+                                    logger$2.writeInfo("beforeRequest hook DONE", uri);
                                     queryString = query
                                         ? "?".concat(toQueryString(query))
                                         : "";
@@ -1573,6 +1687,7 @@ var request = function (rp) { return __awaiter(void 0, void 0, void 0, function 
                                 case 2:
                                     resp = _a.sent();
                                     status = resp.status;
+                                    logger$2.writeInfo("fetch DONE", uri);
                                     if (!isUnauthorized(status)) return [3 /*break*/, 5];
                                     return [4 /*yield*/, unauthInterceptor(uri)];
                                 case 3:
@@ -1582,6 +1697,7 @@ var request = function (rp) { return __awaiter(void 0, void 0, void 0, function 
                                 case 5: return [4 /*yield*/, parseResponse(resp)];
                                 case 6:
                                     respBody = _a.sent();
+                                    logger$2.writeInfo("DONE", uri);
                                     if (isSuccessResponse(status)) {
                                         return [2 /*return*/, respBody
                                                 ? afterRequestInterceptor(respBody)
@@ -1680,11 +1796,17 @@ var Http = /** @class */ (function () {
     return Http;
 }());
 
+var logger$1 = new Logger_1("newRequestQueue");
 var newRequestQueue = function (_a) {
     var waitUntilComplete = _a.waitUntilComplete;
+    logger$1.writeInfo("Creating new queue");
     var rtnPromise;
-    var reset = function () { rtnPromise = undefined; };
+    var reset = function () {
+        rtnPromise = undefined;
+        logger$1.writeInfo("queueing DONE");
+    };
     return function (args) {
+        logger$1.writeInfo("queueing START");
         if (!rtnPromise) {
             rtnPromise = waitUntilComplete(args).then(reset).catch(function (e) {
                 reset();
@@ -11923,8 +12045,10 @@ var transformParamsToSnakeCase = function (_a) {
 };
 
 var queueRequests = newRequestQueue({ waitUntilComplete: refreshAuthTokens });
+var logger = new Logger_1("newHttp");
 var newHttp = function (_a) {
     var afterRequestInterceptor = _a.afterRequestInterceptor, beforeRequestInterceptor = _a.beforeRequestInterceptor, domain = _a.domain, processError = _a.processError, getAuthTokens = _a.getAuthTokens, deleteAuthTokens = _a.deleteAuthTokens, setAuthTokens = _a.setAuthTokens, refreshRoute = _a.refreshRoute, refreshTokenHeaderName = _a.refreshTokenHeaderName;
+    logger.writeInfo("Creating new HttpClient");
     var http = new Http({
         afterRequestInterceptor: lodash.exports.flow(configureJsonApiResponse, afterRequestInterceptor),
         beforeRequest: ensureAuthTokensRefreshed(getAuthTokens, refreshRoute, function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
@@ -11941,6 +12065,7 @@ var newHttp = function (_a) {
 };
 
 exports.ServerError = ServerError;
+exports.enableLogging = enableLogging;
 exports.newHttp = newHttp;
 exports.transformBodyToCamelCase = transformBodyToCamelCase;
 exports.transformParamsToSnakeCase = transformParamsToSnakeCase;

@@ -1,0 +1,30 @@
+on:
+  push:
+    branches:
+      - main
+name: NPM Publish
+jobs:
+  publish:
+    env:
+      ACTION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN_SAM }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
+      - name: Publish to NPM Registry
+        timeout-minutes: 10
+
+        run: |
+          echo "Creating git tag"
+          PACKAGE_VERSION=$(cat package.json|grep version|head -1|awk -F: '{ print $2 }'|sed 's/[", ]//g')
+
+          git remote set-url --push origin https://${GITHUB_ACTOR}:${ACTION_TOKEN}@github.com/${GITHUB_REPOSITORY}
+          git tag ${PACKAGE_VERSION}
+          git push --tags
+
+          echo "Publishing Tag to NPM Registry"
+          echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc
+          npm publish --access public

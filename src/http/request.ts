@@ -9,7 +9,10 @@ import {
   ServerErrorDetails
 }                        from "http/types"
 import { toQueryString } from "http/urlHelpers"
+import { Logger }        from "utils/Logger"
 import { isString }      from "utils/typeCheckers"
+
+const logger = new Logger("request")
 
 export const request = async <T>(rp: RequestParams & Configuration): Promise<T> => {
   const {
@@ -24,9 +27,11 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
           query,
           unauthInterceptor,
         } = rp
-
   return await watchForErrors(errorInterceptor, async () => {
+    logger.writeInfo("START", uri)
+    logger.writeInfo("beforeRequest hook START", uri)
     await beforeRequest(uri)
+    logger.writeInfo("beforeRequest hook DONE", uri)
 
     const queryString    = query
                            ? `?${toQueryString(query)}`
@@ -35,6 +40,7 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
     const config         = fetchConfig(method, beforeRequestInterceptor, body)
     const resp: Response = await fetch(url, config)
     const { status }     = resp
+    logger.writeInfo("fetch DONE", uri)
 
     if (isUnauthorized(status)) {
       await unauthInterceptor(uri)
@@ -42,7 +48,7 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
     }
 
     const respBody = await parseResponse(resp)
-
+    logger.writeInfo("DONE", uri)
     if (isSuccessResponse(status)) {
       return respBody
              ? afterRequestInterceptor(respBody as ResponseBody)

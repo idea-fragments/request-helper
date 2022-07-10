@@ -15,6 +15,7 @@ import {
   TokenSetter
 }                                     from "http/types"
 import { flow }                       from "lodash"
+import { enableLogging, Logger }      from "utils/Logger"
 
 export type NewClientParams = {
   beforeRequestInterceptor: BeforeRequestInterceptor,
@@ -27,7 +28,9 @@ export type NewClientParams = {
   afterRequestInterceptor: AfterRequestInterceptor,
   refreshTokenHeaderName?: string,
 }
+
 const queueRequests = newRequestQueue({ waitUntilComplete: refreshAuthTokens })
+const logger        = new Logger("newHttp")
 
 export const newHttp = ({
                           afterRequestInterceptor,
@@ -40,6 +43,8 @@ export const newHttp = ({
                           refreshRoute,
                           refreshTokenHeaderName,
                         }: NewClientParams) => {
+  logger.writeInfo("Creating new HttpClient")
+
   const http: HttpClient = new Http({
     afterRequestInterceptor:  flow(
       configureJsonApiResponse,
@@ -65,7 +70,8 @@ export const newHttp = ({
   return http
 }
 
-export * from "http/types"
-export * from "http/ServerError"
-export * from "http/transformBodyToCamelCase"
-export * from "http/transformParamsToSnakeCase"
+export *                 from "http/types"
+export *                 from "http/ServerError"
+export *                 from "http/transformBodyToCamelCase"
+export *                 from "http/transformParamsToSnakeCase"
+export { enableLogging } from "utils/Logger"

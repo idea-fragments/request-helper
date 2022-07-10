@@ -4,6 +4,7 @@ import resolve          from "@rollup/plugin-node-resolve"
 import typescript       from "@rollup/plugin-typescript"
 import peerDepsExternal from "rollup-plugin-peer-deps-external"
 import dts              from "rollup-plugin-dts"
+import json             from "@rollup/plugin-json"
 
 export default [
   {
@@ -18,6 +19,7 @@ export default [
       },
     ],
     plugins: [
+      json(),
       peerDepsExternal(),
       typescript({ outputToFilesystem: false, tsconfig: "./tsconfig.json" }),
       commonjs(),
@@ -28,10 +30,12 @@ export default [
   {
     input:   "./dist/types/index.d.ts",
     output:  [{ file: "dist/index.d.ts", format: "es" }],
-    plugins: [dts({
-      compilerOptions: {
-        baseUrl: "./dist/types",
-      },
-    })],
+    plugins: [
+      dts({
+        compilerOptions: {
+          baseUrl: "./dist/types",
+        },
+      }),
+    ],
   },
 ]

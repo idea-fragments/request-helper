@@ -1,1 +1,1 @@
-{"version":3,"file":"configureAuthedRequest.d.ts","sourceRoot":"","sources":["../../src/http/configureAuthedRequest.ts"],"names":[],"mappings":"AAAA,OAAO,EACL,wBAAwB,EAExB,aAAa,EACd,MAAM,YAAY,CAAA;AAEnB,eAAO,MAAM,sBAAsB,kBAClB,aAAa,2BACH,MAAM,KAC9B,wBAaF,CAAA"}
+{"version":3,"file":"configureAuthedRequest.d.ts","sourceRoot":"","sources":["../../src/http/configureAuthedRequest.ts"],"names":[],"mappings":"AAAA,OAAO,EACL,wBAAwB,EAExB,aAAa,EACd,MAAM,YAAY,CAAA;AAEnB,eAAO,MAAM,sBAAsB,kBAClB,aAAa,2BACH,MAAM,KAC9B,wBAcA,CAAA"}
