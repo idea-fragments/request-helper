@@ -4,8 +4,7 @@ export class ResponseList extends Array implements ResponseDataList {
   pagination: Pagination | undefined
 
   constructor(list: { [key: string]: any }[], pagination?: Pagination) {
-    super()
-    list.forEach(this.push)
+    super(...list)
     this.pagination = pagination
   }
 }
