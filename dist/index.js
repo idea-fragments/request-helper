@@ -777,8 +777,7 @@ var configureAuthedRequest = function (getAuthTokens, refreshTokenHeaderName) {
 var ResponseList = /** @class */ (function (_super) {
     __extends(ResponseList, _super);
     function ResponseList(list, pagination) {
-        var _this = _super.call(this) || this;
-        list.forEach(_this.push);
+        var _this = _super.apply(this, list) || this;
         _this.pagination = pagination;
         return _this;
     }
