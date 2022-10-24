@@ -11931,7 +11931,13 @@ var camelcaseKeys = function camelcaseKeys(input, options) {
 };
 
 var transformBodyToCamelCase = function (body) {
-    return camelcaseKeys(body);
+    if (body instanceof Array) {
+        body.forEach(function (item, index) {
+            body[index] = camelcaseKeys(item, { deep: true });
+        });
+        return body;
+    }
+    return camelcaseKeys(body, { deep: true });
 };
 
 /**
