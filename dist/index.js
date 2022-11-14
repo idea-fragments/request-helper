@@ -802,6 +802,33 @@ var getSingleRecordData = function (data) {
     return data.attributes;
 };
 
+var ERROR_TYPES = {
+    SYSTEM: "SYSTEM",
+    UNKNOWN: "UNKNOWN",
+    USER_FACING: "USER_FACING",
+    VALIDATION: "VALIDATION",
+};
+var ServerError = /** @class */ (function (_super) {
+    __extends(ServerError, _super);
+    function ServerError(_a) {
+        var data = _a.data, error = _a.error, status = _a.status, type = _a.type;
+        var _this = _super.call(this, error) || this;
+        _this._isServerError = true;
+        _this.isValidationError = function () { return _this.type === ERROR_TYPES.VALIDATION; };
+        _this.isDisplayableError = function () { return _this.type === ERROR_TYPES.USER_FACING; };
+        _this.isSystemError = function () { return _this.type === ERROR_TYPES.SYSTEM; };
+        _this.data = data;
+        _this.status = status;
+        _this.type = type.toUpperCase();
+        return _this;
+    }
+    ServerError.ERROR_TYPES = ERROR_TYPES;
+    ServerError.isInstance = function (e) {
+        return e.hasOwnProperty("_isServerError");
+    };
+    return ServerError;
+}(Error));
+
 var configureUnauthInterceptor = function (deleteAuthTokens, refreshRoute, refreshTokens) {
     return function (route) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -811,7 +838,12 @@ var configureUnauthInterceptor = function (deleteAuthTokens, refreshRoute, refre
                     return [4 /*yield*/, deleteAuthTokens()];
                 case 1:
                     _a.sent();
-                    throw new Error("Please try again later");
+                    throw new ServerError({
+                        data: { route: refreshRoute },
+                        error: "Unable to refresh access token",
+                        status: 401,
+                        type: "USER_FACING",
+                    });
                 case 2:
                     return [4 /*yield*/, refreshTokens()];
                 case 3:
@@ -863,33 +895,6 @@ var parseResponse = function (r) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
-
-var ERROR_TYPES = {
-    SYSTEM: "SYSTEM",
-    UNKNOWN: "UNKNOWN",
-    USER_FACING: "USER_FACING",
-    VALIDATION: "VALIDATION",
-};
-var ServerError = /** @class */ (function (_super) {
-    __extends(ServerError, _super);
-    function ServerError(_a) {
-        var data = _a.data, error = _a.error, status = _a.status, type = _a.type;
-        var _this = _super.call(this, error) || this;
-        _this._isServerError = true;
-        _this.isValidationError = function () { return _this.type === ERROR_TYPES.VALIDATION; };
-        _this.isDisplayableError = function () { return _this.type === ERROR_TYPES.USER_FACING; };
-        _this.isSystemError = function () { return _this.type === ERROR_TYPES.SYSTEM; };
-        _this.data = data;
-        _this.status = status;
-        _this.type = type.toUpperCase();
-        return _this;
-    }
-    ServerError.ERROR_TYPES = ERROR_TYPES;
-    ServerError.isInstance = function (e) {
-        return e.hasOwnProperty("_isServerError");
-    };
-    return ServerError;
-}(Error));
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
