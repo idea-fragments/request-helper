@@ -1,4 +1,8 @@
-import { TokenDeleter, UnauthenticatedInterceptor } from "http/types"
+import { ServerError } from "http/ServerError"
+import {
+  TokenDeleter,
+  UnauthenticatedInterceptor
+}                      from "http/types"
 
 export const configureUnauthInterceptor = (
   deleteAuthTokens: TokenDeleter,
@@ -7,10 +11,16 @@ export const configureUnauthInterceptor = (
 ): UnauthenticatedInterceptor => {
   let refreshingTokens = false
 
-  return async (route :string): Promise<any> => {
+  return async (route: string): Promise<any> => {
     if (route === refreshRoute) {
       await deleteAuthTokens()
-      throw new Error("Please try again later")
+
+      throw new ServerError({
+        data:   { route: refreshRoute },
+        error:  "Unable to refresh access token",
+        status: 401,
+        type:   "USER_FACING",
+      })
     }
 
     refreshingTokens = true
