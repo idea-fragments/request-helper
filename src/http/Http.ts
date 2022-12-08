@@ -3,7 +3,10 @@ import {
   BeforeRequestInterceptor,
   Configuration,
   HttpClient,
-  RequestConfig
+  RequestConfig,
+  IndividualRequestOptions,
+  RequestWithBody,
+  RequestWithoutBody
 }                  from "http/types"
 
 type Const = Configuration & {
@@ -12,33 +15,36 @@ type Const = Configuration & {
 
 
 export class Http implements HttpClient {
-  readonly beforeRequestInterceptor: BeforeRequestInterceptor
+  readonly globalBeforeRequestInterceptor: BeforeRequestInterceptor
   readonly config: Const
 
   constructor(p: Const) {
-    this.beforeRequestInterceptor = p.beforeRequestInterceptor
-    this.config                   = p
+    this.globalBeforeRequestInterceptor = p.beforeRequestInterceptor
+    this.config                         = p
   }
 
-  private makeRequest = <Rtn>({ configure, ...p }: Params) => request<Rtn>({
+  private makeRequest = <Rtn>({ options, ...p }: Params) => request<Rtn>({
     ...p,
     ...this.config,
+    ...options,
     beforeRequestInterceptor: (config: RequestConfig): RequestConfig => {
-      return configure(this.beforeRequestInterceptor(config))
+      const configureIndividualRequest: BeforeRequestInterceptor = options?.configure ?? ((c) => c)
+
+      return configureIndividualRequest(this.globalBeforeRequestInterceptor(config))
     },
   })
 
-  private requestWithBody = (method: string) => <Rtn>(
+  private requestWithBody = (method: string): RequestWithBody => <Rtn>(
     uri: string,
     body: Object,
-    configure: BeforeRequestInterceptor = (c) => c,
-  ) => (this.makeRequest<Rtn>({ method, uri, body, configure }))
+    options?: IndividualRequestOptions,
+  ) => (this.makeRequest<Rtn>({ method, uri, body, options }))
 
-  private requestWithoutBody = (method: string) => <Rtn>(
+  private requestWithoutBody = (method: string): RequestWithoutBody => <Rtn>(
     uri: string,
     query?: Object,
-    configure: BeforeRequestInterceptor = (c) => c,
-  ) => this.makeRequest<Rtn>({ method, uri, query, configure })
+    options?: IndividualRequestOptions,
+  ) => this.makeRequest<Rtn>({ method, uri, query, options })
 
   PATCH  = this.requestWithBody("PATCH")
   POST   = this.requestWithBody("POST")
@@ -52,5 +58,5 @@ type Params = {
   body?: Object,
   uri: string,
   query?: Object,
-  configure: BeforeRequestInterceptor,
+  options?: IndividualRequestOptions,
 }
