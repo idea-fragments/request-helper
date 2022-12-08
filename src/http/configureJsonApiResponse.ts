@@ -21,6 +21,8 @@ type _ExampleReturn = ((
   options: (Options & { addIncludedData: true })
 ) => DataWithIncludedRelationships)
 
+export const RECORD_TYPE_KEY = "_recordType"
+
 export const configureJsonApiResponse = (body: ResponseBody, options?: Options) => {
   const data                = body.data!
   const { addIncludedData } = options ?? {}
@@ -44,5 +46,5 @@ const getDataList = (data: ResponseData[], body: ResponseBody) => {
 const getIncludedData = (included: ResponseData[]) => included.map(getSingleRecordData)
 
 const getSingleRecordData = <T>(data: ResponseData) => {
-  return { ...data.attributes, _recordType: data.type }
+  return { ...data.attributes, [RECORD_TYPE_KEY]: data.type }
 }

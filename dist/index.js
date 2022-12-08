@@ -787,6 +787,7 @@ var ResponseList = /** @class */ (function (_super) {
 var isArray = function (o) { return o instanceof Array; };
 var isString = function (o) { return typeof o === "string"; };
 
+var RECORD_TYPE_KEY = "_recordType";
 var configureJsonApiResponse = function (body, options) {
     var data = body.data;
     var addIncludedData = (options !== null && options !== void 0 ? options : {}).addIncludedData;
@@ -804,7 +805,8 @@ var getDataList = function (data, body) {
 };
 var getIncludedData = function (included) { return included.map(getSingleRecordData); };
 var getSingleRecordData = function (data) {
-    return _assign(_assign({}, data.attributes), { _recordType: data.type });
+    var _a;
+    return _assign(_assign({}, data.attributes), (_a = {}, _a[RECORD_TYPE_KEY] = data.type, _a));
 };
 
 var ERROR_TYPES = {
@@ -11939,11 +11941,11 @@ var camelcaseKeys = function camelcaseKeys(input, options) {
 var transformBodyToCamelCase = function (body) {
     if (body instanceof Array) {
         body.forEach(function (item, index) {
-            body[index] = camelcaseKeys(item, { deep: true });
+            body[index] = transformBodyToCamelCase(item);
         });
         return body;
     }
-    return camelcaseKeys(body, { deep: true });
+    return camelcaseKeys(body, { deep: true, exclude: [RECORD_TYPE_KEY] });
 };
 
 /**
