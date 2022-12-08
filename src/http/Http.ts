@@ -26,7 +26,7 @@ export class Http implements HttpClient {
   private makeRequest = <Rtn>({ options, ...p }: Params) => request<Rtn>({
     ...p,
     ...this.config,
-    ...options,
+    otherOptions: options,
     beforeRequestInterceptor: (config: RequestConfig): RequestConfig => {
       const configureIndividualRequest: BeforeRequestInterceptor = options?.configure ?? ((c) => c)
 

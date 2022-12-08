@@ -1782,7 +1782,7 @@ var Http = /** @class */ (function () {
         var _this = this;
         this.makeRequest = function (_a) {
             var options = _a.options, p = __rest(_a, ["options"]);
-            return request(_assign(_assign(_assign(_assign({}, p), _this.config), options), { beforeRequestInterceptor: function (config) {
+            return request(_assign(_assign(_assign({}, p), _this.config), { otherOptions: options, beforeRequestInterceptor: function (config) {
                     var _a;
                     var configureIndividualRequest = (_a = options === null || options === void 0 ? void 0 : options.configure) !== null && _a !== void 0 ? _a : (function (c) { return c; });
                     return configureIndividualRequest(_this.globalBeforeRequestInterceptor(config));
