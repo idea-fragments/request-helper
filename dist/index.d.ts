@@ -25,16 +25,17 @@ declare class ServerError extends Error {
     isSystemError: () => boolean;
 }
 
-declare type AfterRequestInterceptor = (body: ResponseBody) => {
+declare type AfterRequestInterceptor = (body: ResponseBody, options?: IndividualRequestOptions) => {
     [key: string]: any;
 };
 declare type BeforeRequestHook = (uri: string) => Promise<any>;
 declare type BeforeRequestInterceptor = (config: RequestConfig) => RequestConfig;
 declare type Configuration = {
-    beforeRequest: BeforeRequestHook;
-    errorInterceptor: ErrorInterceptor;
-    beforeRequestInterceptor: BeforeRequestInterceptor;
     afterRequestInterceptor: AfterRequestInterceptor;
+    beforeRequest: BeforeRequestHook;
+    beforeRequestInterceptor: BeforeRequestInterceptor;
+    errorInterceptor: ErrorInterceptor;
+    otherOptions?: IndividualRequestOptions;
     unauthInterceptor: UnauthenticatedInterceptor;
 };
 declare type ErrorInterceptor = (e: ServerError | Error) => Promise<boolean>;
@@ -71,8 +72,12 @@ declare type RequestParams = {
     };
     uri: string;
 };
-declare type RequestWithBody = <T>(uri: string, body: Object, configure?: BeforeRequestInterceptor) => Promise<T>;
-declare type RequestWithoutBody = <T>(uri: string, query?: Object, configure?: BeforeRequestInterceptor) => Promise<T>;
+declare type IndividualRequestOptions = {
+    configure?: BeforeRequestInterceptor;
+    addIncludedData?: boolean;
+};
+declare type RequestWithBody = <T>(uri: string, body: Object, options?: IndividualRequestOptions) => Promise<T>;
+declare type RequestWithoutBody = <T>(uri: string, query?: Object, options?: IndividualRequestOptions) => Promise<T>;
 declare type ResponseBody = {
     [key: string]: any;
     data?: ResponseData[] | ResponseData;
@@ -85,6 +90,7 @@ declare type ResponseData = {
     relationships?: {
         [key: string]: any;
     };
+    "type": string;
 };
 interface ResponseDataList extends Array<ResponseData> {
     pagination?: Pagination;
@@ -127,4 +133,4 @@ declare type NewClientParams = {
 };
 declare const newHttp: ({ afterRequestInterceptor, beforeRequestInterceptor, domain, processError, getAuthTokens, deleteAuthTokens, setAuthTokens, refreshRoute, refreshTokenHeaderName, }: NewClientParams) => HttpClient;
 
-export { AfterRequestInterceptor, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, FetchError, HttpClient, NewClientParams, Pagination, RequestConfig, RequestParams, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, enableLogging, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };
+export { AfterRequestInterceptor, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, FetchError, HttpClient, IndividualRequestOptions, NewClientParams, Pagination, RequestConfig, RequestParams, RequestWithBody, RequestWithoutBody, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, enableLogging, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };

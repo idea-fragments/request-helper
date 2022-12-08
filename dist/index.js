@@ -787,19 +787,24 @@ var ResponseList = /** @class */ (function (_super) {
 var isArray = function (o) { return o instanceof Array; };
 var isString = function (o) { return typeof o === "string"; };
 
-var configureJsonApiResponse = function (body) {
+var configureJsonApiResponse = function (body, options) {
     var data = body.data;
-    return isArray(data)
+    var addIncludedData = (options !== null && options !== void 0 ? options : {}).addIncludedData;
+    var records = isArray(data)
         ? getDataList(data, body)
         : getSingleRecordData(data);
+    return addIncludedData
+        ? [records, getIncludedData(body.included)]
+        : records;
 };
 var getDataList = function (data, body) {
     var pagination = body.pagination;
     var records = data.map(getSingleRecordData);
     return new ResponseList(records, pagination);
 };
+var getIncludedData = function (included) { return included.map(getSingleRecordData); };
 var getSingleRecordData = function (data) {
-    return data.attributes;
+    return _assign(_assign({}, data.attributes), { _recordType: data.type });
 };
 
 var ERROR_TYPES = {
@@ -1666,11 +1671,11 @@ Logger_1.packageName = name;
 
 var logger$2 = new Logger_1("request");
 var request = function (rp) { return __awaiter(void 0, void 0, void 0, function () {
-    var afterRequestInterceptor, beforeRequest, beforeRequestInterceptor, domain, errorInterceptor, method, uri, body, query, unauthInterceptor;
+    var afterRequestInterceptor, beforeRequest, beforeRequestInterceptor, domain, errorInterceptor, method, uri, body, otherOptions, query, unauthInterceptor;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                afterRequestInterceptor = rp.afterRequestInterceptor, beforeRequest = rp.beforeRequest, beforeRequestInterceptor = rp.beforeRequestInterceptor, domain = rp.domain, errorInterceptor = rp.errorInterceptor, method = rp.method, uri = rp.uri, body = rp.body, query = rp.query, unauthInterceptor = rp.unauthInterceptor;
+                afterRequestInterceptor = rp.afterRequestInterceptor, beforeRequest = rp.beforeRequest, beforeRequestInterceptor = rp.beforeRequestInterceptor, domain = rp.domain, errorInterceptor = rp.errorInterceptor, method = rp.method, uri = rp.uri, body = rp.body, otherOptions = rp.otherOptions, query = rp.query, unauthInterceptor = rp.unauthInterceptor;
                 return [4 /*yield*/, watchForErrors(errorInterceptor, function () { return __awaiter(void 0, void 0, void 0, function () {
                         var queryString, url, config, resp, status, respBody;
                         return __generator(this, function (_a) {
@@ -1704,7 +1709,7 @@ var request = function (rp) { return __awaiter(void 0, void 0, void 0, function 
                                     logger$2.writeInfo("DONE", uri);
                                     if (isSuccessResponse(status)) {
                                         return [2 /*return*/, respBody
-                                                ? afterRequestInterceptor(respBody)
+                                                ? afterRequestInterceptor(respBody, otherOptions)
                                                 : undefined];
                                     }
                                     bubbleServerError(respBody, status);
@@ -1776,25 +1781,21 @@ var Http = /** @class */ (function () {
     function Http(p) {
         var _this = this;
         this.makeRequest = function (_a) {
-            var configure = _a.configure, p = __rest(_a, ["configure"]);
-            return request(_assign(_assign(_assign({}, p), _this.config), { beforeRequestInterceptor: function (config) {
-                    return configure(_this.beforeRequestInterceptor(config));
+            var options = _a.options, p = __rest(_a, ["options"]);
+            return request(_assign(_assign(_assign(_assign({}, p), _this.config), options), { beforeRequestInterceptor: function (config) {
+                    var _a;
+                    var configureIndividualRequest = (_a = options === null || options === void 0 ? void 0 : options.configure) !== null && _a !== void 0 ? _a : (function (c) { return c; });
+                    return configureIndividualRequest(_this.globalBeforeRequestInterceptor(config));
                 } }));
         };
-        this.requestWithBody = function (method) { return function (uri, body, configure) {
-            if (configure === void 0) { configure = function (c) { return c; }; }
-            return (_this.makeRequest({ method: method, uri: uri, body: body, configure: configure }));
-        }; };
-        this.requestWithoutBody = function (method) { return function (uri, query, configure) {
-            if (configure === void 0) { configure = function (c) { return c; }; }
-            return _this.makeRequest({ method: method, uri: uri, query: query, configure: configure });
-        }; };
+        this.requestWithBody = function (method) { return function (uri, body, options) { return (_this.makeRequest({ method: method, uri: uri, body: body, options: options })); }; };
+        this.requestWithoutBody = function (method) { return function (uri, query, options) { return _this.makeRequest({ method: method, uri: uri, query: query, options: options }); }; };
         this.PATCH = this.requestWithBody("PATCH");
         this.POST = this.requestWithBody("POST");
         this.PUT = this.requestWithBody("PUT");
         this.GET = this.requestWithoutBody("GET");
         this.DELETE = this.requestWithoutBody("DELETE");
-        this.beforeRequestInterceptor = p.beforeRequestInterceptor;
+        this.globalBeforeRequestInterceptor = p.beforeRequestInterceptor;
         this.config = p;
     }
     return Http;

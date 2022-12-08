@@ -44,8 +44,7 @@ export class Http implements HttpClient {
     uri: string,
     query?: Object,
     options?: IndividualRequestOptions,
-    configure: BeforeRequestInterceptor = (c) => c,
-  ) => this.makeRequest<Rtn>({ method, uri, query, configure })
+  ) => this.makeRequest<Rtn>({ method, uri, query, options })
 
   PATCH  = this.requestWithBody("PATCH")
   POST   = this.requestWithBody("POST")
@@ -59,5 +58,5 @@ type Params = {
   body?: Object,
   uri: string,
   query?: Object,
-  configure: BeforeRequestInterceptor,
+  options?: IndividualRequestOptions,
 }

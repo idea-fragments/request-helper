@@ -1,14 +1,15 @@
 import { ServerError, ServerErrorType } from "http/ServerError";
-export declare type AfterRequestInterceptor = (body: ResponseBody) => {
+export declare type AfterRequestInterceptor = (body: ResponseBody, options?: IndividualRequestOptions) => {
     [key: string]: any;
 };
 export declare type BeforeRequestHook = (uri: string) => Promise<any>;
 export declare type BeforeRequestInterceptor = (config: RequestConfig) => RequestConfig;
 export declare type Configuration = {
-    beforeRequest: BeforeRequestHook;
-    errorInterceptor: ErrorInterceptor;
-    beforeRequestInterceptor: BeforeRequestInterceptor;
     afterRequestInterceptor: AfterRequestInterceptor;
+    beforeRequest: BeforeRequestHook;
+    beforeRequestInterceptor: BeforeRequestInterceptor;
+    errorInterceptor: ErrorInterceptor;
+    otherOptions?: IndividualRequestOptions;
     unauthInterceptor: UnauthenticatedInterceptor;
 };
 export declare type ErrorInterceptor = (e: ServerError | Error) => Promise<boolean>;
@@ -45,8 +46,12 @@ export declare type RequestParams = {
     };
     uri: string;
 };
-declare type RequestWithBody = <T>(uri: string, body: Object, configure?: BeforeRequestInterceptor) => Promise<T>;
-declare type RequestWithoutBody = <T>(uri: string, query?: Object, configure?: BeforeRequestInterceptor) => Promise<T>;
+export declare type IndividualRequestOptions = {
+    configure?: BeforeRequestInterceptor;
+    addIncludedData?: boolean;
+};
+export declare type RequestWithBody = <T>(uri: string, body: Object, options?: IndividualRequestOptions) => Promise<T>;
+export declare type RequestWithoutBody = <T>(uri: string, query?: Object, options?: IndividualRequestOptions) => Promise<T>;
 export declare type ResponseBody = {
     [key: string]: any;
     data?: ResponseData[] | ResponseData;
@@ -59,6 +64,7 @@ export declare type ResponseData = {
     relationships?: {
         [key: string]: any;
     };
+    "type": string;
 };
 export interface ResponseDataList extends Array<ResponseData> {
     pagination?: Pagination;
@@ -81,5 +87,4 @@ export declare type TokenProvider = () => ({
 } & Session);
 export declare type TokenSetter = (tokens: Session) => Promise<void>;
 export declare type UnauthenticatedInterceptor = (route: string) => Promise<any>;
-export {};
 //# sourceMappingURL=types.d.ts.map

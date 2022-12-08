@@ -13,7 +13,7 @@ type Data = ResponseList | Record
 type IncludedRelationships = Record[]
 type DataWithIncludedRelationships = [Data, IncludedRelationships]
 
-type Func = ((
+type _ExampleReturn = ((
   body: ResponseBody,
   options: (Options & { addIncludedData?: false })
 ) => Data) | ((
@@ -21,7 +21,7 @@ type Func = ((
   options: (Options & { addIncludedData: true })
 ) => DataWithIncludedRelationships)
 
-export const configureJsonApiResponse: Func = (body: ResponseBody, options?: Options) => {
+export const configureJsonApiResponse = (body: ResponseBody, options?: Options) => {
   const data                = body.data!
   const { addIncludedData } = options ?? {}
 
