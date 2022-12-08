@@ -24,6 +24,7 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
           method,
           uri,
           body,
+          otherOptions,
           query,
           unauthInterceptor,
         } = rp
@@ -51,7 +52,7 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
     logger.writeInfo("DONE", uri)
     if (isSuccessResponse(status)) {
       return respBody
-             ? afterRequestInterceptor(respBody as ResponseBody)
+             ? afterRequestInterceptor(respBody as ResponseBody, otherOptions)
              : undefined
     }
     bubbleServerError(respBody, status)

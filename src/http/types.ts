@@ -1,13 +1,20 @@
-import { ServerError, ServerErrorType } from "http/ServerError"
+import {
+  ServerError,
+  ServerErrorType
+} from "http/ServerError"
 
-export type AfterRequestInterceptor = (body: ResponseBody) => { [key: string]: any }
+export type AfterRequestInterceptor = (
+  body: ResponseBody,
+  options?: IndividualRequestOptions
+) => { [key: string]: any }
 export type BeforeRequestHook = (uri: string) => Promise<any>
 export type BeforeRequestInterceptor = (config: RequestConfig) => RequestConfig
 export type Configuration = {
-  beforeRequest: BeforeRequestHook,
-  errorInterceptor: ErrorInterceptor,
-  beforeRequestInterceptor: BeforeRequestInterceptor,
   afterRequestInterceptor: AfterRequestInterceptor,
+  beforeRequest: BeforeRequestHook,
+  beforeRequestInterceptor: BeforeRequestInterceptor,
+  errorInterceptor: ErrorInterceptor,
+  otherOptions?: IndividualRequestOptions,
   unauthInterceptor: UnauthenticatedInterceptor,
 }
 export type ErrorInterceptor = (e: ServerError | Error) => Promise<boolean>
@@ -39,12 +46,17 @@ export type RequestParams = {
   uri: string,
 }
 
-type RequestWithBody = <T>(
-  uri: string, body: Object, configure?: BeforeRequestInterceptor
+export type IndividualRequestOptions = {
+  configure?: BeforeRequestInterceptor,
+  addIncludedData?: boolean,
+}
+
+export type RequestWithBody = <T>(
+  uri: string, body: Object, options?: IndividualRequestOptions,
 ) => Promise<T>
 
-type RequestWithoutBody = <T>(
-  uri: string, query?: Object, configure?: BeforeRequestInterceptor,
+export type RequestWithoutBody = <T>(
+  uri: string, query?: Object, options?: IndividualRequestOptions,
 ) => Promise<T>
 
 export type ResponseBody = {
@@ -55,6 +67,7 @@ export type ResponseBody = {
 export type ResponseData = {
   attributes: { [key: string]: any },
   relationships?: { [key: string]: any },
+  "type": string,
 }
 
 export interface ResponseDataList extends Array<ResponseData> {
@@ -71,7 +84,7 @@ export type Session = { accessToken: string, refreshToken: string }
 
 export type TokenDeleter = () => Promise<void>
 export type TokenProvider = () => ({
-  isAccessTokenExpired: () => boolean,
-} & Session)
+                                     isAccessTokenExpired: () => boolean,
+                                   } & Session)
 export type TokenSetter = (tokens: Session) => Promise<void>
 export type UnauthenticatedInterceptor = (route: string) => Promise<any>
