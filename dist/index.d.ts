@@ -25,6 +25,10 @@ declare class ServerError extends Error {
     isSystemError: () => boolean;
 }
 
+declare type Association<T> = {
+    _recordType: string;
+} & T;
+declare type Associations<T> = Association<T>[];
 declare type AfterRequestInterceptor = (body: ResponseBody, options?: IndividualRequestOptions) => {
     [key: string]: any;
 };
@@ -133,4 +137,4 @@ declare type NewClientParams = {
 };
 declare const newHttp: ({ afterRequestInterceptor, beforeRequestInterceptor, domain, processError, getAuthTokens, deleteAuthTokens, setAuthTokens, refreshRoute, refreshTokenHeaderName, }: NewClientParams) => HttpClient;
 
-export { AfterRequestInterceptor, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, FetchError, HttpClient, IndividualRequestOptions, NewClientParams, Pagination, RequestConfig, RequestParams, RequestWithBody, RequestWithoutBody, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, enableLogging, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };
+export { AfterRequestInterceptor, Association, Associations, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, FetchError, HttpClient, IndividualRequestOptions, NewClientParams, Pagination, RequestConfig, RequestParams, RequestWithBody, RequestWithoutBody, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, enableLogging, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };

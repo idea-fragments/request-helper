@@ -3,6 +3,8 @@ import {
   ServerErrorType
 } from "http/ServerError"
 
+export type Association<T> = { _recordType: string } & T
+export type Associations<T> = Association<T>[]
 export type AfterRequestInterceptor = (
   body: ResponseBody,
   options?: IndividualRequestOptions

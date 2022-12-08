@@ -1,4 +1,8 @@
 import { ServerError, ServerErrorType } from "http/ServerError";
+export declare type Association<T> = {
+    _recordType: string;
+} & T;
+export declare type Associations<T> = Association<T>[];
 export declare type AfterRequestInterceptor = (body: ResponseBody, options?: IndividualRequestOptions) => {
     [key: string]: any;
 };
