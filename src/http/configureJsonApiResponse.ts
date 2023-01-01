@@ -37,7 +37,7 @@ export const configureJsonApiResponse = (body: ResponseBody, options?: Options) 
 }
 
 const getDataList = (data: ResponseData[], body: ResponseBody) => {
-  const pagination = body.pagination
+  const pagination = body.meta?.pagination
   const records    = data.map(getSingleRecordData)
 
   return new ResponseList(records, pagination)
