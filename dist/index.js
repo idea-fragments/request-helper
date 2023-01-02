@@ -799,7 +799,8 @@ var configureJsonApiResponse = function (body, options) {
         : records;
 };
 var getDataList = function (data, body) {
-    var pagination = body.pagination;
+    var _a;
+    var pagination = (_a = body.meta) === null || _a === void 0 ? void 0 : _a.pagination;
     var records = data.map(getSingleRecordData);
     return new ResponseList(records, pagination);
 };
