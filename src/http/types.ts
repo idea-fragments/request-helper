@@ -31,10 +31,10 @@ export interface HttpClient {
 }
 
 export type Pagination = {
-  total_count: number,
+  totalCount: number,
   page: number,
-  page_size: number,
-  reference_id: number,
+  pageSize: number,
+  referenceId: number,
 }
 export type RequestConfig = Omit<RequestInit, "body"> & {
   body?: { [key: string]: any },

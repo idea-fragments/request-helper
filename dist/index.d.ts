@@ -52,10 +52,10 @@ interface HttpClient {
     DELETE: RequestWithoutBody;
 }
 declare type Pagination = {
-    total_count: number;
+    totalCount: number;
     page: number;
-    page_size: number;
-    reference_id: number;
+    pageSize: number;
+    referenceId: number;
 };
 declare type RequestConfig = Omit<RequestInit, "body"> & {
     body?: {
