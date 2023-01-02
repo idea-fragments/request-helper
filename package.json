@@ -1,6 +1,6 @@
 {
   "name": "@idea-fragments/request-helper",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "author": "IdeaFragments LLC",
   "browserslist": {
     "production": [
