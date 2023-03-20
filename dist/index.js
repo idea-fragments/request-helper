@@ -807,7 +807,13 @@ var getDataList = function (data, body) {
 var getIncludedData = function (included) { return included.map(getSingleRecordData); };
 var getSingleRecordData = function (data) {
     var _a;
-    return _assign((_a = {}, _a[RECORD_TYPE_KEY] = data.type, _a.relationships = data.relationships, _a), data.attributes);
+    return _assign((_a = {}, _a[RECORD_TYPE_KEY] = data.type, _a.relationships = data.relationships
+        ? Object.keys(data.relationships)
+            .map(function (k) {
+            data.relationships[k] =
+                Number(data.relationships[k].data.id);
+        })
+        : undefined, _a), data.attributes);
 };
 
 var ERROR_TYPES = {
