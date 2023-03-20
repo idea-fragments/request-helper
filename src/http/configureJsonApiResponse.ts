@@ -48,12 +48,15 @@ const getIncludedData = (included: ResponseData[]) => included.map(getSingleReco
 const getSingleRecordData = <T>(data: ResponseData) => {
   return {
     [RECORD_TYPE_KEY]: data.type,
-    relationships:     data.relationships
-                       ? Object.keys(data.relationships)
-                               .map((k) => {
-                                 data.relationships![k] = Number(data.relationships![k].data.id)
-                               })
-                       : undefined,
+    relationships:     getRelationshipSnippet(data),
     ...data.attributes
   }
+}
+
+const getRelationshipSnippet = (data: ResponseData) => {
+  if (!data.relationships) return undefined
+
+  return Object.keys(data.relationships).reduce((relationships, k) => {
+    return { ...relationships, [k]: Number(data.relationships![k].data.id) }
+  }, {})
 }
