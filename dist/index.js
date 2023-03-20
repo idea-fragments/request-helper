@@ -814,7 +814,7 @@ var getRelationshipSnippet = function (data) {
         return undefined;
     return Object.keys(data.relationships).reduce(function (relationships, k) {
         var _a;
-        return _assign(_assign({}, relationships), (_a = {}, _a[k] = Number(data.relationships[k].data.id), _a));
+        return _assign(_assign({}, relationships), (_a = {}, _a[k] = { id: Number(data.relationships[k].data.id) }, _a));
     }, {});
 };
 

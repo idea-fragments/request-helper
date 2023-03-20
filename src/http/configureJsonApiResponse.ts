@@ -57,6 +57,6 @@ const getRelationshipSnippet = (data: ResponseData) => {
   if (!data.relationships) return undefined
 
   return Object.keys(data.relationships).reduce((relationships, k) => {
-    return { ...relationships, [k]: Number(data.relationships![k].data.id) }
+    return { ...relationships, [k]: { id: Number(data.relationships![k].data.id) } }
   }, {})
 }
