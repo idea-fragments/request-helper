@@ -46,5 +46,5 @@ const getDataList = (data: ResponseData[], body: ResponseBody) => {
 const getIncludedData = (included: ResponseData[]) => included.map(getSingleRecordData)
 
 const getSingleRecordData = <T>(data: ResponseData) => {
-  return { ...data.attributes, [RECORD_TYPE_KEY]: data.type }
+  return { [RECORD_TYPE_KEY]: data.type, relationships: data.relationships, ...data.attributes }
 }

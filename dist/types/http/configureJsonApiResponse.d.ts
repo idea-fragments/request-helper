@@ -4,10 +4,19 @@ declare type Options = Pick<IndividualRequestOptions, "addIncludedData">;
 export declare const RECORD_TYPE_KEY = "_recordType";
 export declare const configureJsonApiResponse: (body: ResponseBody, options?: Options) => ResponseList | {
     _recordType: string;
+    relationships: {
+        [key: string]: any;
+    } | undefined;
 } | (ResponseList | {
     _recordType: string;
+    relationships: {
+        [key: string]: any;
+    } | undefined;
 } | {
     _recordType: string;
+    relationships: {
+        [key: string]: any;
+    } | undefined;
 }[])[];
 export {};
 //# sourceMappingURL=configureJsonApiResponse.d.ts.map
