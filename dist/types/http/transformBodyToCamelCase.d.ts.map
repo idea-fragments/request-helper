@@ -1,1 +1,1 @@
-{"version":3,"file":"transformBodyToCamelCase.d.ts","sourceRoot":"","sources":["../../src/http/transformBodyToCamelCase.ts"],"names":[],"mappings":"AAIA,eAAO,MAAM,wBAAwB,mBAepC,CAAA"}
+{"version":3,"file":"transformBodyToCamelCase.d.ts","sourceRoot":"","sources":["../../src/http/transformBodyToCamelCase.ts"],"names":[],"mappings":"AAIA,eAAO,MAAM,wBAAwB,mBAgBpC,CAAA"}

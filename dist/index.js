@@ -11953,8 +11953,9 @@ var transformBodyToCamelCase = function (body) {
         body.forEach(function (item, index) {
             body[index] = transformBodyToCamelCase(item);
         });
-        if (body instanceof ResponseList) {
-            body.pagination = transformBodyToCamelCase(body.pagination);
+        if (body.hasOwnProperty("pagination")) {
+            var b = body;
+            b.pagination = transformBodyToCamelCase(b.pagination);
         }
         return body;
     }

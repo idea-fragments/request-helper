@@ -8,8 +8,9 @@ export const transformBodyToCamelCase = <T>(body: T) => {
       body[index] = transformBodyToCamelCase(item)
     })
 
-    if(body instanceof ResponseList) {
-      body.pagination = transformBodyToCamelCase(body.pagination)
+    if(body.hasOwnProperty("pagination")) {
+      const b = body as unknown as ResponseList
+      b.pagination = transformBodyToCamelCase(b.pagination)
     }
 
     return body
