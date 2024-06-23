@@ -15,7 +15,7 @@ import {
   TokenSetter
 }                                     from "http/types"
 import { flow }                       from "lodash"
-import { enableLogging, Logger }      from "utils/Logger"
+import { Logger }      from "utils/Logger"
 
 export type NewClientParams = {
   beforeRequestInterceptor: BeforeRequestInterceptor,

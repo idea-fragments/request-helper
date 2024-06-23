@@ -4,10 +4,11 @@ import {
   BeforeRequestInterceptor,
   Configuration,
   ErrorInterceptor,
+  RequestConfig,
   RequestParams,
   ResponseBody,
   ServerErrorDetails
-}                        from "http/types"
+} from "http/types"
 import { toQueryString } from "http/urlHelpers"
 import { Logger }        from "utils/Logger"
 import { isString }      from "utils/typeCheckers"
@@ -34,12 +35,13 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
     await beforeRequest(uri)
     logger.writeInfo("beforeRequest hook DONE", uri)
 
-    const queryString    = query
-                           ? `?${toQueryString(query)}`
-                           : ""
+    const { query: finalizedQuery, ...config } = fetchConfig(
+      method, beforeRequestInterceptor, body, query
+    )
+
+    const queryString    = finalizedQuery ? `?${toQueryString(finalizedQuery)}` : ""
     const url            = `${domain}${uri}${queryString}`
-    const config         = fetchConfig(method, beforeRequestInterceptor, body)
-    const resp: Response = await fetch(url, config)
+    const resp: Response = await fetch(url, config as RequestInit)
     const { status }     = resp
     logger.writeInfo("fetch DONE", uri)
 
@@ -77,11 +79,13 @@ const bubbleServerError = (respBody: any, status: number) => {
 const fetchConfig = (
   method: string,
   intercept: BeforeRequestInterceptor,
-  body?: Object
-): RequestInit => {
+  body?: Object,
+  query?: Object
+): RequestConfig => {
   const config = intercept({
     body,
     method,
+    query,
     cache:    "no-cache",
     headers:  { "content-type": "application/json" },
     redirect: "follow",

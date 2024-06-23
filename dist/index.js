@@ -1690,35 +1690,33 @@ var request = function (rp) { return __awaiter(void 0, void 0, void 0, function 
             case 0:
                 afterRequestInterceptor = rp.afterRequestInterceptor, beforeRequest = rp.beforeRequest, beforeRequestInterceptor = rp.beforeRequestInterceptor, domain = rp.domain, errorInterceptor = rp.errorInterceptor, method = rp.method, uri = rp.uri, body = rp.body, otherOptions = rp.otherOptions, query = rp.query, unauthInterceptor = rp.unauthInterceptor;
                 return [4 /*yield*/, watchForErrors(errorInterceptor, function () { return __awaiter(void 0, void 0, void 0, function () {
-                        var queryString, url, config, resp, status, respBody;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
+                        var _a, finalizedQuery, config, queryString, url, resp, status, respBody;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
                                 case 0:
                                     logger$2.writeInfo("START", uri);
                                     logger$2.writeInfo("beforeRequest hook START", uri);
                                     return [4 /*yield*/, beforeRequest(uri)];
                                 case 1:
-                                    _a.sent();
+                                    _b.sent();
                                     logger$2.writeInfo("beforeRequest hook DONE", uri);
-                                    queryString = query
-                                        ? "?".concat(toQueryString(query))
-                                        : "";
+                                    _a = fetchConfig(method, beforeRequestInterceptor, body, query), finalizedQuery = _a.query, config = __rest(_a, ["query"]);
+                                    queryString = finalizedQuery ? "?".concat(toQueryString(finalizedQuery)) : "";
                                     url = "".concat(domain).concat(uri).concat(queryString);
-                                    config = fetchConfig(method, beforeRequestInterceptor, body);
                                     return [4 /*yield*/, fetch(url, config)];
                                 case 2:
-                                    resp = _a.sent();
+                                    resp = _b.sent();
                                     status = resp.status;
                                     logger$2.writeInfo("fetch DONE", uri);
                                     if (!isUnauthorized(status)) return [3 /*break*/, 5];
                                     return [4 /*yield*/, unauthInterceptor(uri)];
                                 case 3:
-                                    _a.sent();
+                                    _b.sent();
                                     return [4 /*yield*/, retry(rp)];
-                                case 4: return [2 /*return*/, _a.sent()];
+                                case 4: return [2 /*return*/, _b.sent()];
                                 case 5: return [4 /*yield*/, parseResponse(resp)];
                                 case 6:
-                                    respBody = _a.sent();
+                                    respBody = _b.sent();
                                     logger$2.writeInfo("DONE", uri);
                                     if (isSuccessResponse(status)) {
                                         return [2 /*return*/, respBody
@@ -1742,10 +1740,11 @@ var bubbleServerError = function (respBody, status) {
         : _assign(_assign({}, errorResp), { status: status, type: (_a = respBody.type) !== null && _a !== void 0 ? _a : ServerError.ERROR_TYPES.SYSTEM });
     throw new ServerError(errorDetails);
 };
-var fetchConfig = function (method, intercept, body) {
+var fetchConfig = function (method, intercept, body, query) {
     var config = intercept({
         body: body,
         method: method,
+        query: query,
         cache: "no-cache",
         headers: { "content-type": "application/json" },
         redirect: "follow",
@@ -11954,6 +11953,9 @@ var transformBodyToCamelCase = function (body) {
         body.forEach(function (item, index) {
             body[index] = transformBodyToCamelCase(item);
         });
+        if (body instanceof ResponseList) {
+            body.pagination = transformBodyToCamelCase(body.pagination);
+        }
         return body;
     }
     return camelcaseKeys(body, { deep: true, exclude: [RECORD_TYPE_KEY] });
