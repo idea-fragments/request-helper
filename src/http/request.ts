@@ -22,6 +22,7 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
           beforeRequestInterceptor,
           domain,
           errorInterceptor,
+          extraLogFields,
           method,
           uri,
           body,
@@ -29,11 +30,13 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
           query,
           unauthInterceptor,
         } = rp
+  const extra = extraLogFields?.() ?? {}
   return await watchForErrors(errorInterceptor, async () => {
-    logger.writeInfo("START", uri)
-    logger.writeInfo("beforeRequest hook START", uri)
+    const requestInitiatedAt = Date.now()
+    logger.writeInfo("[request:start]", { method, uri, query, ...extra })
+    logger.writeInfo("[request:beforeHook:start]", { method, uri, ...extra })
     await beforeRequest(uri)
-    logger.writeInfo("beforeRequest hook DONE", uri)
+    logger.writeInfo("[request:beforeHook:done]", { method, uri, ...extra })
 
     const { query: finalizedQuery, ...config } = fetchConfig(
       method, beforeRequestInterceptor, body, query
@@ -43,15 +46,15 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
     const url            = `${domain}${uri}${queryString}`
     const resp: Response = await fetch(url, config as RequestInit)
     const { status }     = resp
-    logger.writeInfo("fetch DONE", uri)
+    logger.writeInfo("[request:response]", { method, uri, status, ...extra })
 
     if (isUnauthorized(status)) {
-      await unauthInterceptor(uri)
+      await unauthInterceptor(uri, requestInitiatedAt)
       return await retry(rp)
     }
 
     const respBody = await parseResponse(resp)
-    logger.writeInfo("DONE", uri)
+    logger.writeInfo("[request:done]", { method, uri, status, ...extra })
     if (isSuccessResponse(status)) {
       return respBody
              ? afterRequestInterceptor(respBody as ResponseBody, otherOptions)

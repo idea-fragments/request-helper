@@ -1,9 +1,13 @@
-import { BeforeRequestHook, TokenProvider } from "http/types"
+import { BeforeRequestHook, ExtraLogFields, TokenProvider } from "http/types"
+import { Logger } from "utils/Logger"
+
+const logger = new Logger("ensureAuthTokensRefreshed")
 
 export const ensureAuthTokensRefreshed = (
   getAuthTokens: TokenProvider,
   refreshRoute: string,
-  refreshTokens: () => Promise<any>
+  refreshTokens: () => Promise<any>,
+  extraLogFields?: ExtraLogFields,
 ): BeforeRequestHook => {
   return async (uri: string) => {
     const { accessToken, isAccessTokenExpired } = getAuthTokens()
@@ -12,6 +16,11 @@ export const ensureAuthTokensRefreshed = (
                           && !!accessToken
                           && isAccessTokenExpired()
 
-    return needToRefresh ? refreshTokens() : Promise.resolve()
+    if (!needToRefresh) return Promise.resolve()
+
+    const extra = extraLogFields?.() ?? {}
+    logger.writeInfo("[refreshQueue:waiting]", { uri, ...extra })
+    await refreshTokens()
+    logger.writeInfo("[refreshQueue:resumed]", { uri, ...extra })
   }
 }

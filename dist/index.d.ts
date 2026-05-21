@@ -34,11 +34,13 @@ declare type AfterRequestInterceptor = (body: ResponseBody, options?: Individual
 };
 declare type BeforeRequestHook = (uri: string) => Promise<any>;
 declare type BeforeRequestInterceptor = (config: RequestConfig) => RequestConfig;
+declare type ExtraLogFields = () => Record<string, any>;
 declare type Configuration = {
     afterRequestInterceptor: AfterRequestInterceptor;
     beforeRequest: BeforeRequestHook;
     beforeRequestInterceptor: BeforeRequestInterceptor;
     errorInterceptor: ErrorInterceptor;
+    extraLogFields?: ExtraLogFields;
     otherOptions?: IndividualRequestOptions;
     unauthInterceptor: UnauthenticatedInterceptor;
 };
@@ -116,7 +118,7 @@ declare type TokenProvider = () => ({
     isAccessTokenExpired: () => boolean;
 } & Session);
 declare type TokenSetter = (tokens: Session) => Promise<void>;
-declare type UnauthenticatedInterceptor = (route: string) => Promise<any>;
+declare type UnauthenticatedInterceptor = (route: string, requestInitiatedAt?: number) => Promise<any>;
 
 declare const transformBodyToCamelCase: <T>(body: T) => T;
 
@@ -125,16 +127,17 @@ declare const transformParamsToSnakeCase: ({ body, query, ...rest }: RequestConf
 declare const enableLogging: () => void;
 
 declare type NewClientParams = {
-    beforeRequestInterceptor: BeforeRequestInterceptor;
-    domain: string;
-    processError: ErrorInterceptor;
-    getAuthTokens: TokenProvider;
-    deleteAuthTokens: TokenDeleter;
-    setAuthTokens: TokenSetter;
-    refreshRoute: string;
     afterRequestInterceptor: AfterRequestInterceptor;
+    beforeRequestInterceptor: BeforeRequestInterceptor;
+    deleteAuthTokens: TokenDeleter;
+    domain: string;
+    extraLogFields?: ExtraLogFields;
+    getAuthTokens: TokenProvider;
+    processError: ErrorInterceptor;
+    refreshRoute: string;
     refreshTokenHeaderName?: string;
+    setAuthTokens: TokenSetter;
 };
-declare const newHttp: ({ afterRequestInterceptor, beforeRequestInterceptor, domain, processError, getAuthTokens, deleteAuthTokens, setAuthTokens, refreshRoute, refreshTokenHeaderName, }: NewClientParams) => HttpClient;
+declare const newHttp: ({ afterRequestInterceptor, beforeRequestInterceptor, deleteAuthTokens, domain, extraLogFields, getAuthTokens, processError, refreshRoute, refreshTokenHeaderName, setAuthTokens, }: NewClientParams) => HttpClient;
 
-export { AfterRequestInterceptor, Association, Associations, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, FetchError, HttpClient, IndividualRequestOptions, NewClientParams, Pagination, RequestConfig, RequestParams, RequestWithBody, RequestWithoutBody, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, enableLogging, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };
+export { AfterRequestInterceptor, Association, Associations, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, ExtraLogFields, FetchError, HttpClient, IndividualRequestOptions, NewClientParams, Pagination, RequestConfig, RequestParams, RequestWithBody, RequestWithoutBody, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, enableLogging, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };

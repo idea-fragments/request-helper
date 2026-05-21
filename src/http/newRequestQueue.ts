@@ -9,16 +9,16 @@ const logger = new Logger("newRequestQueue")
 export const newRequestQueue = <Args>(
   { waitUntilComplete }: Params<Args>
 ): PromiseFunc<Args> => {
-  logger.writeInfo("Creating new queue")
+  logger.writeInfo("[requestQueue:init]")
   let rtnPromise: Promise<any> | undefined
 
   const reset = () => {
     rtnPromise = undefined
-    logger.writeInfo("queueing DONE")
+    logger.writeInfo("[requestQueue:done]")
   }
 
   return (args: Args) => {
-    logger.writeInfo("queueing START")
+    logger.writeInfo("[requestQueue:enqueue]", { alreadyInFlight: !!rtnPromise })
 
     if (!rtnPromise) {
       rtnPromise = waitUntilComplete(args).then(reset).catch((e) => {

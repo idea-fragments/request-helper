@@ -12,9 +12,7 @@ export const refreshAuthTokens = async ({
                                           refreshRoute,
                                           setAuthTokens
                                         }: AuthTokensRefresherParams) => {
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      http.GET<Session>(refreshRoute).then(setAuthTokens).then(resolve)
-    }, 500)
-  })
+  await setAuthTokens(
+    await http.GET<Session>(refreshRoute)
+  )
 }
