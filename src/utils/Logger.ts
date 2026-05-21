@@ -3,6 +3,8 @@ import { Logger } from "@idea-fragments/logger-js"
 import { name }   from "../../package.json"
 
 export const enableLogging = () => Logger.addModules([
+  "configureUnauthInterceptor",
+  "ensureAuthTokensRefreshed",
   "newHttp",
   "newRequestQueue",
   "request"

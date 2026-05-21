@@ -9,6 +9,7 @@ import {
   AfterRequestInterceptor,
   BeforeRequestInterceptor,
   ErrorInterceptor,
+  ExtraLogFields,
   HttpClient,
   TokenDeleter,
   TokenProvider,
@@ -18,15 +19,16 @@ import { flow }                       from "lodash"
 import { Logger }      from "utils/Logger"
 
 export type NewClientParams = {
-  beforeRequestInterceptor: BeforeRequestInterceptor,
-  domain: string,
-  processError: ErrorInterceptor,
-  getAuthTokens: TokenProvider,
-  deleteAuthTokens: TokenDeleter,
-  setAuthTokens: TokenSetter,
-  refreshRoute: string,
   afterRequestInterceptor: AfterRequestInterceptor,
+  beforeRequestInterceptor: BeforeRequestInterceptor,
+  deleteAuthTokens: TokenDeleter,
+  domain: string,
+  extraLogFields?: ExtraLogFields,
+  getAuthTokens: TokenProvider,
+  processError: ErrorInterceptor,
+  refreshRoute: string,
   refreshTokenHeaderName?: string,
+  setAuthTokens: TokenSetter,
 }
 
 const queueRequests = newRequestQueue({ waitUntilComplete: refreshAuthTokens })
@@ -35,15 +37,16 @@ const logger        = new Logger("newHttp")
 export const newHttp = ({
                           afterRequestInterceptor,
                           beforeRequestInterceptor,
-                          domain,
-                          processError,
-                          getAuthTokens,
                           deleteAuthTokens,
-                          setAuthTokens,
+                          domain,
+                          extraLogFields,
+                          getAuthTokens,
+                          processError,
                           refreshRoute,
                           refreshTokenHeaderName,
+                          setAuthTokens,
                         }: NewClientParams) => {
-  logger.writeInfo("Creating new HttpClient")
+  logger.writeInfo("[newHttp:init]", { domain, ...extraLogFields?.() })
 
   const http: HttpClient = new Http({
     afterRequestInterceptor:  flow(
@@ -54,17 +57,20 @@ export const newHttp = ({
       getAuthTokens,
       refreshRoute,
       async () => queueRequests({ http, refreshRoute, setAuthTokens }),
+      extraLogFields,
     ),
     beforeRequestInterceptor: flow(
       configureAuthedRequest(getAuthTokens, refreshTokenHeaderName),
       beforeRequestInterceptor,
     ),
     domain,
+    extraLogFields,
     errorInterceptor:         processError,
     unauthInterceptor:        configureUnauthInterceptor(
       deleteAuthTokens,
       refreshRoute,
       async () => queueRequests({ http, refreshRoute, setAuthTokens }),
+      extraLogFields,
     )
   })
   return http

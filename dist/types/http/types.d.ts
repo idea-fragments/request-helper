@@ -8,11 +8,13 @@ export declare type AfterRequestInterceptor = (body: ResponseBody, options?: Ind
 };
 export declare type BeforeRequestHook = (uri: string) => Promise<any>;
 export declare type BeforeRequestInterceptor = (config: RequestConfig) => RequestConfig;
+export declare type ExtraLogFields = () => Record<string, any>;
 export declare type Configuration = {
     afterRequestInterceptor: AfterRequestInterceptor;
     beforeRequest: BeforeRequestHook;
     beforeRequestInterceptor: BeforeRequestInterceptor;
     errorInterceptor: ErrorInterceptor;
+    extraLogFields?: ExtraLogFields;
     otherOptions?: IndividualRequestOptions;
     unauthInterceptor: UnauthenticatedInterceptor;
 };
@@ -90,5 +92,5 @@ export declare type TokenProvider = () => ({
     isAccessTokenExpired: () => boolean;
 } & Session);
 export declare type TokenSetter = (tokens: Session) => Promise<void>;
-export declare type UnauthenticatedInterceptor = (route: string) => Promise<any>;
+export declare type UnauthenticatedInterceptor = (route: string, requestInitiatedAt?: number) => Promise<any>;
 //# sourceMappingURL=types.d.ts.map
