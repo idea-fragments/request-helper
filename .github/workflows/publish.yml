@@ -3,28 +3,40 @@ on:
     branches:
       - main
 name: NPM Publish
+permissions:
+  id-token: write  # Required for OIDC
+  contents: write
 jobs:
   publish:
     env:
       ACTION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN_SAM }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version-file: ".node-version"
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
       - name: Publish to NPM Registry
         timeout-minutes: 10
 
         run: |
-          echo "Creating git tag"
           PACKAGE_VERSION=$(cat package.json|grep version|head -1|awk -F: '{ print $2 }'|sed 's/[", ]//g')
-
+          
           git remote set-url --push origin https://${GITHUB_ACTOR}:${ACTION_TOKEN}@github.com/${GITHUB_REPOSITORY}
-          git tag ${PACKAGE_VERSION}
-          git push --tags
-
+          
+          # Fetch tags from remote to check if version tag already exists
+          git fetch --tags
+          
+          # Only create tag if it doesn't exist
+          if ! git rev-parse ${PACKAGE_VERSION} >/dev/null 2>&1; then
+            echo "Creating git tag ${PACKAGE_VERSION}"
+            git tag ${PACKAGE_VERSION}
+            git push --tags
+          else
+            echo "Tag ${PACKAGE_VERSION} already exists, skipping"
+          fi
+          
           echo "Publishing Tag to NPM Registry"
-          echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc
+          npm ci
           npm publish --access public
