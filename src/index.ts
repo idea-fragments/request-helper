@@ -16,7 +16,7 @@ import {
   TokenSetter
 }                                     from "http/types"
 import { flow }                       from "lodash"
-import { Logger }      from "utils/Logger"
+import { Logger }                     from "utils/Logger"
 
 export type NewClientParams = {
   afterRequestInterceptor: AfterRequestInterceptor,
@@ -32,7 +32,7 @@ export type NewClientParams = {
 }
 
 const queueRequests = newRequestQueue({ waitUntilComplete: refreshAuthTokens })
-const logger        = new Logger("newHttp")
+const logger = new Logger("newHttp")
 
 export const newHttp = ({
                           afterRequestInterceptor,
@@ -76,8 +76,11 @@ export const newHttp = ({
   return http
 }
 
-export *                 from "http/types"
-export *                 from "http/ServerError"
-export *                 from "http/transformBodyToCamelCase"
-export *                 from "http/transformParamsToSnakeCase"
-export { enableLogging } from "utils/Logger"
+export * from "http/types"
+export * from "http/ServerError"
+export * from "http/transformBodyToCamelCase"
+export * from "http/transformParamsToSnakeCase"
+export {
+  disableLogging,
+  enableLogging
+}        from "utils/Logger"

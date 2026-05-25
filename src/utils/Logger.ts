@@ -2,13 +2,15 @@ import { Logger } from "@idea-fragments/logger-js"
 // @ts-ignore
 import { name }   from "../../package.json"
 
-export const enableLogging = () => Logger.addModules([
-  "configureUnauthInterceptor",
-  "ensureAuthTokensRefreshed",
-  "newHttp",
-  "newRequestQueue",
-  "request"
-])
+const MODULES = [
+          "configureUnauthInterceptor",
+          "ensureAuthTokensRefreshed",
+          "newHttp",
+          "newRequestQueue",
+          "request"
+        ]
+export const disableLogging = () => Logger.removeModules(MODULES)
+export const enableLogging = () => Logger.addModules(MODULES)
 
 Logger.packageName = name
 
