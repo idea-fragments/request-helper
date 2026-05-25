@@ -15,7 +15,7 @@ import { isString }      from "utils/typeCheckers"
 
 const logger = new Logger("request")
 
-export const request = async <T>(rp: RequestParams & Configuration): Promise<T> => {
+export const request = async <T>(rp: RequestParams & Configuration, originalRequestInitiatedAt?: number): Promise<T> => {
   const {
           afterRequestInterceptor,
           beforeRequest,
@@ -32,7 +32,7 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
         } = rp
   const extra = extraLogFields?.() ?? {}
   return await watchForErrors(errorInterceptor, async () => {
-    const requestInitiatedAt = Date.now()
+    const requestInitiatedAt = originalRequestInitiatedAt ?? Date.now()
     logger.writeInfo("[request:start]", { method, uri, query, ...extra })
     logger.writeInfo("[request:beforeHook:start]", { method, uri, ...extra })
     await beforeRequest(uri)
@@ -50,7 +50,7 @@ export const request = async <T>(rp: RequestParams & Configuration): Promise<T> 
 
     if (isUnauthorized(status)) {
       await unauthInterceptor(uri, requestInitiatedAt)
-      return await retry(rp)
+      return await retry(rp, requestInitiatedAt)
     }
 
     const respBody = await parseResponse(resp)
@@ -108,8 +108,8 @@ const finalizeBody = ({ headers = {}, body }: RequestInit) => {
 
 const isSuccessResponse = (status: number): boolean => status < 400
 const isUnauthorized    = (status: number): boolean => status === 401
-const retry             = <T>(rp: RequestParams & Configuration) =>
-  request<T>(rp)
+const retry             = <T>(rp: RequestParams & Configuration, originalRequestInitiatedAt: number) =>
+  request<T>(rp, originalRequestInitiatedAt)
 const watchForErrors    = async (
   errorInterceptor: ErrorInterceptor,
   f: Function,
