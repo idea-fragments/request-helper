@@ -124,6 +124,7 @@ declare const transformBodyToCamelCase: <T>(body: T) => T;
 
 declare const transformParamsToSnakeCase: ({ body, query, ...rest }: RequestConfig) => RequestConfig;
 
+declare const disableLogging: () => void;
 declare const enableLogging: () => void;
 
 declare type NewClientParams = {
@@ -140,4 +141,4 @@ declare type NewClientParams = {
 };
 declare const newHttp: ({ afterRequestInterceptor, beforeRequestInterceptor, deleteAuthTokens, domain, extraLogFields, getAuthTokens, processError, refreshRoute, refreshTokenHeaderName, setAuthTokens, }: NewClientParams) => HttpClient;
 
-export { AfterRequestInterceptor, Association, Associations, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, ExtraLogFields, FetchError, HttpClient, IndividualRequestOptions, NewClientParams, Pagination, RequestConfig, RequestParams, RequestWithBody, RequestWithoutBody, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, enableLogging, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };
+export { AfterRequestInterceptor, Association, Associations, BeforeRequestHook, BeforeRequestInterceptor, Configuration, ErrorInterceptor, ExtraLogFields, FetchError, HttpClient, IndividualRequestOptions, NewClientParams, Pagination, RequestConfig, RequestParams, RequestWithBody, RequestWithoutBody, ResponseBody, ResponseData, ResponseDataList, ServerError, ServerErrorDetails, ServerErrorType, Session, TokenDeleter, TokenProvider, TokenSetter, UnauthenticatedInterceptor, disableLogging, enableLogging, newHttp, transformBodyToCamelCase, transformParamsToSnakeCase };
