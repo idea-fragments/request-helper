@@ -407,13 +407,15 @@ var Logger_1 = dist.Logger = Logger;
 
 var name = "@idea-fragments/request-helper";
 
-var enableLogging = function () { return Logger_1.addModules([
+var MODULES = [
     "configureUnauthInterceptor",
     "ensureAuthTokensRefreshed",
     "newHttp",
     "newRequestQueue",
     "request"
-]); };
+];
+var disableLogging = function () { return Logger_1.removeModules(MODULES); };
+var enableLogging = function () { return Logger_1.addModules(MODULES); };
 Logger_1.packageName = name;
 
 var logger$4 = new Logger_1("configureUnauthInterceptor");
@@ -980,7 +982,7 @@ var toQueryString = function (o) {
 };
 
 var logger$2 = new Logger_1("request");
-var request = function (rp) { return __awaiter(void 0, void 0, void 0, function () {
+var request = function (rp, originalRequestInitiatedAt) { return __awaiter(void 0, void 0, void 0, function () {
     var afterRequestInterceptor, beforeRequest, beforeRequestInterceptor, domain, errorInterceptor, extraLogFields, method, uri, body, otherOptions, query, unauthInterceptor, extra;
     var _a;
     return __generator(this, function (_b) {
@@ -993,7 +995,7 @@ var request = function (rp) { return __awaiter(void 0, void 0, void 0, function 
                         return __generator(this, function (_b) {
                             switch (_b.label) {
                                 case 0:
-                                    requestInitiatedAt = Date.now();
+                                    requestInitiatedAt = originalRequestInitiatedAt !== null && originalRequestInitiatedAt !== void 0 ? originalRequestInitiatedAt : Date.now();
                                     logger$2.writeInfo("[request:start]", __assign({ method: method, uri: uri, query: query }, extra));
                                     logger$2.writeInfo("[request:beforeHook:start]", __assign({ method: method, uri: uri }, extra));
                                     return [4 /*yield*/, beforeRequest(uri)];
@@ -1012,7 +1014,7 @@ var request = function (rp) { return __awaiter(void 0, void 0, void 0, function 
                                     return [4 /*yield*/, unauthInterceptor(uri, requestInitiatedAt)];
                                 case 3:
                                     _b.sent();
-                                    return [4 /*yield*/, retry(rp)];
+                                    return [4 /*yield*/, retry(rp, requestInitiatedAt)];
                                 case 4: return [2 /*return*/, _b.sent()];
                                 case 5: return [4 /*yield*/, parseResponse(resp)];
                                 case 6:
@@ -1063,8 +1065,8 @@ var finalizeBody = function (_a) {
 };
 var isSuccessResponse = function (status) { return status < 400; };
 var isUnauthorized = function (status) { return status === 401; };
-var retry = function (rp) {
-    return request(rp);
+var retry = function (rp, originalRequestInitiatedAt) {
+    return request(rp, originalRequestInitiatedAt);
 };
 var watchForErrors = function (errorInterceptor, f) { return __awaiter(void 0, void 0, void 0, function () {
     var e_1, shouldNotBubble;
@@ -11056,6 +11058,7 @@ var newHttp = function (_a) {
 };
 
 exports.ServerError = ServerError;
+exports.disableLogging = disableLogging;
 exports.enableLogging = enableLogging;
 exports.newHttp = newHttp;
 exports.transformBodyToCamelCase = transformBodyToCamelCase;

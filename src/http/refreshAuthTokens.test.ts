@@ -1,6 +1,6 @@
 import { refreshAuthTokens } from "http/refreshAuthTokens"
 
-const buildParams = ({ getResult }) => {
+const buildParams = ({ getResult }: { getResult: () => Promise<any> }) => {
   const setAuthTokens = jest.fn().mockResolvedValue(undefined)
   const http = {
     GET: jest.fn().mockImplementation(getResult),

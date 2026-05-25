@@ -16,5 +16,5 @@ export * from "http/types";
 export * from "http/ServerError";
 export * from "http/transformBodyToCamelCase";
 export * from "http/transformParamsToSnakeCase";
-export { enableLogging } from "utils/Logger";
+export { disableLogging, enableLogging } from "utils/Logger";
 //# sourceMappingURL=index.d.ts.map
