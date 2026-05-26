@@ -18,13 +18,15 @@ export class ServerError extends Error {
   data: { [key: string]: any } | undefined
   status: number
   type: string
+  uri: string
   _isServerError = true
 
-  constructor({ data, error, status, type }: ServerErrorDetails) {
+  constructor({ data, error, status, type, uri }: ServerErrorDetails) {
     super(error)
     this.data   = data
     this.status = status
     this.type   = type.toUpperCase()
+    this.uri = uri
   }
 
   isValidationError  = (): boolean => this.type === ERROR_TYPES.VALIDATION

@@ -83,6 +83,7 @@ export type ServerErrorDetails = {
   error: string,
   status: number,
   type: ServerErrorType,
+  uri: string,
 }
 export type Session = { accessToken: string, refreshToken: string }
 
