@@ -233,7 +233,7 @@ var ERROR_TYPES = {
 var ServerError = /** @class */ (function (_super) {
     __extends(ServerError, _super);
     function ServerError(_a) {
-        var data = _a.data, error = _a.error, status = _a.status, type = _a.type;
+        var data = _a.data, error = _a.error, status = _a.status, type = _a.type, uri = _a.uri;
         var _this = _super.call(this, error) || this;
         _this._isServerError = true;
         _this.isValidationError = function () { return _this.type === ERROR_TYPES.VALIDATION; };
@@ -242,6 +242,7 @@ var ServerError = /** @class */ (function (_super) {
         _this.data = data;
         _this.status = status;
         _this.type = type.toUpperCase();
+        _this.uri = uri;
         return _this;
     }
     ServerError.ERROR_TYPES = ERROR_TYPES;
@@ -433,10 +434,11 @@ var configureUnauthInterceptor = function (deleteAuthTokens, refreshRoute, refre
                 case 1:
                     _b.sent();
                     throw new ServerError({
-                        data: { route: refreshRoute },
+                        data: { route: route },
                         error: "Unable to refresh access token",
                         status: 401,
                         type: "USER_FACING",
+                        uri: route,
                     });
                 case 2:
                     if (requestInitiatedAt && lastRefreshCompletedAt > requestInitiatedAt) {
@@ -1025,7 +1027,7 @@ var request = function (rp, originalRequestInitiatedAt) { return __awaiter(void 
                                                 ? afterRequestInterceptor(respBody, otherOptions)
                                                 : undefined];
                                     }
-                                    bubbleServerError(respBody, status);
+                                    bubbleServerError(uri, respBody, status);
                                     return [2 /*return*/];
                             }
                         });
@@ -1034,12 +1036,12 @@ var request = function (rp, originalRequestInitiatedAt) { return __awaiter(void 
         }
     });
 }); };
-var bubbleServerError = function (respBody, status) {
+var bubbleServerError = function (uri, respBody, status) {
     var _a;
     var errorResp = respBody;
     var errorDetails = isString(respBody)
-        ? { status: status, error: respBody, type: ServerError.ERROR_TYPES.SYSTEM }
-        : __assign(__assign({}, errorResp), { status: status, type: (_a = respBody.type) !== null && _a !== void 0 ? _a : ServerError.ERROR_TYPES.SYSTEM });
+        ? { status: status, error: respBody, type: ServerError.ERROR_TYPES.SYSTEM, uri: uri }
+        : __assign(__assign({}, errorResp), { status: status, type: (_a = respBody.type) !== null && _a !== void 0 ? _a : ServerError.ERROR_TYPES.SYSTEM, uri: uri });
     throw new ServerError(errorDetails);
 };
 var fetchConfig = function (method, intercept, body, query) {

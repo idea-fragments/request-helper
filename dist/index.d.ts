@@ -18,8 +18,9 @@ declare class ServerError extends Error {
     } | undefined;
     status: number;
     type: string;
+    uri: string;
     _isServerError: boolean;
-    constructor({ data, error, status, type }: ServerErrorDetails);
+    constructor({ data, error, status, type, uri }: ServerErrorDetails);
     isValidationError: () => boolean;
     isDisplayableError: () => boolean;
     isSystemError: () => boolean;
@@ -108,6 +109,7 @@ declare type ServerErrorDetails = {
     error: string;
     status: number;
     type: ServerErrorType;
+    uri: string;
 };
 declare type Session = {
     accessToken: string;

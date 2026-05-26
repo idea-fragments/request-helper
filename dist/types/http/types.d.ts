@@ -82,6 +82,7 @@ export declare type ServerErrorDetails = {
     error: string;
     status: number;
     type: ServerErrorType;
+    uri: string;
 };
 export declare type Session = {
     accessToken: string;
