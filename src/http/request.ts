@@ -60,20 +60,21 @@ export const request = async <T>(rp: RequestParams & Configuration, originalRequ
              ? afterRequestInterceptor(respBody as ResponseBody, otherOptions)
              : undefined
     }
-    bubbleServerError(respBody, status)
+    bubbleServerError(uri, respBody, status)
   })
 
 }
 
-const bubbleServerError = (respBody: any, status: number) => {
+const bubbleServerError = (uri: string, respBody: any, status: number) => {
   const errorResp: string | Omit<ServerErrorDetails, "status"> = respBody
   const errorDetails: ServerErrorDetails                       =
           isString(respBody)
-          ? { status, error: respBody, type: ServerError.ERROR_TYPES.SYSTEM }
+          ? { status, error: respBody, type: ServerError.ERROR_TYPES.SYSTEM, uri }
           : {
               ...errorResp as Omit<ServerErrorDetails, "status">,
               status,
-              type: respBody.type ?? ServerError.ERROR_TYPES.SYSTEM
+              type: respBody.type ?? ServerError.ERROR_TYPES.SYSTEM,
+              uri,
             }
 
   throw new ServerError(errorDetails)

@@ -23,10 +23,11 @@ export const configureUnauthInterceptor = (
       await deleteAuthTokens()
 
       throw new ServerError({
-        data:   { route: refreshRoute },
+        data:   { route },
         error:  "Unable to refresh access token",
         status: 401,
         type:   "USER_FACING",
+        uri:    route,
       })
     }
 

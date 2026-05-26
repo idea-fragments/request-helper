@@ -19,8 +19,9 @@ export declare class ServerError extends Error {
     } | undefined;
     status: number;
     type: string;
+    uri: string;
     _isServerError: boolean;
-    constructor({ data, error, status, type }: ServerErrorDetails);
+    constructor({ data, error, status, type, uri }: ServerErrorDetails);
     isValidationError: () => boolean;
     isDisplayableError: () => boolean;
     isSystemError: () => boolean;
